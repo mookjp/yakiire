@@ -1,0 +1,62 @@
+# Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
+version: 2.1
+
+executors:
+  default:
+    machine:
+      image: ubuntu-1604:201903-01
+      docker_layer_caching: true
+    working_directory: /home/circleci/.go_workspace/src/github.com/mookjp/yakiire
+
+jobs:
+  build:
+    executor: default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - vendor-{{ checksum "Gopkg.lock" }}
+      - run:
+          name: Install tools
+          command: |
+            make bootstrap-lint-tools
+      - run:
+          name: Install dependencies
+          command: |
+            if [ ! -d vendor ]; then
+              make dep
+            fi
+      - run:
+          name: Build
+          command: |
+            make build
+      - save_cache:
+          key: vendor-{{ checksum "Gopkg.lock" }}
+          paths:
+            - vendor
+      - persist_to_workspace:
+          root: /home/circleci/.go_workspace/src/github.com/mookjp/yakiire
+          paths:
+            - "vendor/*"
+  test:
+    executor: default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci/.go_workspace/src/github.com/mookjp/yakiire
+      - restore_cache:
+          keys:
+            - vendor-{{ checksum "Gopkg.lock" }}
+      - run:
+          name: Run tests
+          command: |
+            make test
+
+workflows:
+  version: 2.1
+  build-and-test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
