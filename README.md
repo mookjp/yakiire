@@ -9,8 +9,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Contents
 
+- [Installation](#installation)
 - [Configuration](#configuration)
-  - [`gcp`](#gcp)
 - [Usage](#usage)
   - [Get](#get)
 - [TODOs](#todos)
