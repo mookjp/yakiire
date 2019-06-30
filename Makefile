@@ -38,7 +38,7 @@ build: dep
         -ldflags "-X main.version=$(VERSION)"
 
 .PHONY: test
-test: dep
+test:
 	@docker-compose up -d firestore
 	@sleep 2
 	@FIRESTORE_EMULATOR_HOST=localhost:8080 go test -v ./...

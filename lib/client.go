@@ -2,13 +2,8 @@ package lib
 
 import (
 	"context"
-	"fmt"
 	"google.golang.org/api/option"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"time"
-
-	"github.com/pkg/errors"
 
 	"cloud.google.com/go/firestore"
 )
@@ -31,13 +26,13 @@ func NewClient(ctx context.Context, config *ClientConfig) (*Client, error) {
 	if config.Credentials != "" {
 		f, err := firestore.NewClient(ctx, config.ProjectID, option.WithCredentialsFile(config.Credentials))
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to initialize Firestore client with credentials")
+			return nil, err
 		}
 		client = f
 	} else {
 		f, err := firestore.NewClient(ctx, config.ProjectID)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to initialize Firestore client")
+			return nil, err
 		}
 		client = f
 	}
@@ -54,9 +49,6 @@ func (c *Client) Get(ctx context.Context, collection string, docID string) (*Doc
 
 	res, err := c.firestore.Collection(collection).Doc(docID).Get(ctx)
 	if err != nil {
-		if status.Code(err) == codes.NotFound {
-			return nil, errors.Wrap(err, fmt.Sprintf("counldn't find doc(id: %s) in collection(%s)", docID, collection))
-		}
 		return nil, err
 	}
 	return &Doc{data: res.Data()}, nil

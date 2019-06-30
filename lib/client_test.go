@@ -152,7 +152,6 @@ func TestClient_Get(t *testing.T) {
 					t.Errorf("Client.Get() error = %v, wantErr %v", err, tt.wantErr)
 					return
 				}
-				// TODO: error pattern check
 				return
 			}
 			if got.String() != tt.want {
