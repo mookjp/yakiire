@@ -21,15 +21,13 @@ import (
 	"github.com/mookjp/yakiire/lib"
 	"os"
 
-	"github.com/spf13/viper"
-
 	"github.com/spf13/cobra"
 )
 
 const (
 	collections = "collections"
-	credentials = "google-application-credentials"
-	projectID = "firesttore-project-id"
+	credentials = "YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS"
+	projectID = "YAKIIRE_FIRESTORE_PROJECT_ID"
 )
 
 // getCmd represents the get command
@@ -51,8 +49,9 @@ var getCmd = &cobra.Command{
 		}
 
 		ctx := context.Background()
-		cred := viper.GetString(credentials)
-		projectId := viper.GetString(projectID)
+
+		cred := os.Getenv(credentials)
+		projectId := os.Getenv(projectID)
 		fmt.Printf("credential path: %s\n", cred)
 		fmt.Printf("project id: %s\n", projectId)
 
