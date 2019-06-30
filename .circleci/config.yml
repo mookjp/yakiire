@@ -69,9 +69,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: /home/circleci/.go_workspace/src/github.com/mookjp/yakiire
-      - restore_cache:
-          keys:
-            - vendor-{{ checksum "Gopkg.lock" }}
       - run:
           name: Run tests
           command: |
