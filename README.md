@@ -1,7 +1,7 @@
 🔥🔥🔥 yakiire 🔥🔥🔥
 ================================================================================
 
-[![CircleCI](https://circleci.com/gh/mookjp/yakiire/tree/master.svg?style=svg)](https://circleci.com/gh/mookjp/yakiire/tree/master)
+[![CircleCI](https://circleci.com/gh/mookjp/yakiire.svg?style=svg&circle-token=07d36e051e436463f6dac42c402f664e4be4db3a)](https://circleci.com/gh/mookjp/yakiire)
 
 `yakiire` (yaki-ire; 焼入れ) is a CLI to manage and operate data on GCP [Firestore](https://firebase.google.com/docs/firestore).
 
