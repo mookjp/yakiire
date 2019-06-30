@@ -53,12 +53,28 @@ e.g.
 $ yakiire --config .yakiire.yaml get -c products 002VQIDE4D
 
 # it shows a doc in JSON format
+
+{"Attributes":{"color":"red","size":"100"},"CategoryIDs":["1","2","3"],"ID":"002VQIDE4D","Name":"Test Product"}
 ```
 
 It is handy to use [jq](https://firebase.google.com/docs/firestore) to check the result from the command.
 
 ```bash
 $ yakiire --config .yakiire.yaml get -c products 002VQIDE4D | tail -n 1 | jq .
+
+{
+  "Attributes": {
+    "color": "red",
+    "size": "100"
+  },
+  "CategoryIDs": [
+    "1",
+    "2",
+    "3"
+  ],
+  "ID": "002VQIDE4D",
+  "Name": "Test Product"
+}
 ```
 
 ## TODOs
