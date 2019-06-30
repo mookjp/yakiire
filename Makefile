@@ -7,7 +7,7 @@ LINT_TOOLS=\
 	github.com/kisielk/errcheck
 
 .PHONY: all
-all: test reviewdog
+all: build lint test
 
 .PHONY: bootstrap-lint-tools
 bootstrap-lint-tools:
@@ -25,12 +25,11 @@ dep: get-dep
 	@GO111MODULE=off dep ensure -v
 
 .PHONY: lint
-check:
+lint:
 	@go fmt
 	@golint
 	@misspell
 	@errcheck
-	@staticcheck
 
 .PHONY: build
 build: dep
