@@ -33,11 +33,10 @@ go get github.com/mookjp/yakiire
 
 | ENV | value | required |
 |-----|-------|----------|
+| YAKIIRE_FIRESTORE_PROJECT_ID | Firestore project ID | Yes |
 | YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS | GCP's credential file path | No |
-| YAKIIRE_FIRESTORE_PROJECT_ID | Firestore project ID | No |
 
-
-If these variables are not set, `yakiire` uses Google's environment variables e.g. `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS`.
+If `YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS` was not set, `yakiire` uses `YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS` to access to Firestore.
 
 
 ## Usage
