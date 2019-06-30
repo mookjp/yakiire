@@ -1,10 +1,12 @@
 package lib
 
 import (
+	"cloud.google.com/go/firestore"
 	"context"
 	"fmt"
-	"github.com/mookjp/yakiire/test"
 	"testing"
+
+	"github.com/mookjp/yakiire/test"
 )
 
 var helper *test.Helper
@@ -17,9 +19,9 @@ func TestNewClient(t *testing.T) {
 		config *ClientConfig
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name         string
+		args         args
+		wantErr      bool
 		fireStoreErr bool
 	}{
 		{
@@ -28,10 +30,10 @@ func TestNewClient(t *testing.T) {
 				ctx: context.Background(),
 				config: &ClientConfig{
 					Credentials: "test",
-					ProjectID: "yakiire",
+					ProjectID:   "yakiire",
 				},
 			},
-			wantErr: false,
+			wantErr:      false,
 			fireStoreErr: false,
 		},
 		{
@@ -42,7 +44,7 @@ func TestNewClient(t *testing.T) {
 					ProjectID: "yakiire",
 				},
 			},
-			wantErr: false,
+			wantErr:      false,
 			fireStoreErr: false,
 		},
 		{
@@ -51,10 +53,10 @@ func TestNewClient(t *testing.T) {
 				ctx: context.Background(),
 				config: &ClientConfig{
 					Credentials: "test",
-					ProjectID: "yakiire",
+					ProjectID:   "yakiire",
 				},
 			},
-			wantErr: false,
+			wantErr:      false,
 			fireStoreErr: true,
 		},
 	}
@@ -78,6 +80,85 @@ func TestNewClient(t *testing.T) {
 		})
 
 		teardown()
+	}
+}
+
+func TestClient_Get(t *testing.T) {
+	client, err := firestore.NewClient(context.Background(), "yakiire")
+	if err != nil {
+		panic(err)
+	}
+
+	type fields struct {
+		config    *ClientConfig
+		firestore *firestore.Client
+	}
+	type args struct {
+		ctx        context.Context
+		collection string
+		docID      string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "returns a doc when the ID is matched",
+			fields: fields{
+				config: &ClientConfig{
+					Credentials: "test",
+					ProjectID:   "yakiire",
+				},
+				firestore: client,
+			},
+			args: args{
+				ctx: context.Background(),
+				collection: "products",
+				docID: "1",
+			},
+			want: "{\"Attributes\":{\"color\":\"red\",\"size\":\"100\"},\"CategoryIDs\":[\"1\",\"2\",\"3\"],\"ID\":\"1\",\"Name\":\"Test Product\"}",
+			wantErr: false,
+		},
+		{
+			name: "returns an error when the ID is not matched",
+			fields: fields{
+				config: &ClientConfig{
+					Credentials: "test",
+					ProjectID:   "yakiire",
+				},
+				firestore: client,
+			},
+			args: args{
+				ctx: context.Background(),
+				collection: "products",
+				docID: "XXX",
+			},
+			want: "",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &Client{
+				config:    tt.fields.config,
+				firestore: tt.fields.firestore,
+			}
+			got, err := c.Get(tt.args.ctx, tt.args.collection, tt.args.docID)
+			if err != nil {
+				if !tt.wantErr {
+					t.Errorf("Client.Get() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				// TODO: error pattern check
+				return
+			}
+			if got.String() != tt.want {
+				t.Errorf("Client.Get().String() = %s, want %v", got.String(), tt.want)
+			}
+		})
 	}
 }
 

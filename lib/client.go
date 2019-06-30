@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/api/option"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"time"
 
 	"github.com/pkg/errors"
@@ -52,7 +54,10 @@ func (c *Client) Get(ctx context.Context, collection string, docID string) (*Doc
 
 	res, err := c.firestore.Collection(collection).Doc(docID).Get(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("counldn't doc(id: %s) in collection(%s)", docID, collection))
+		if status.Code(err) == codes.NotFound {
+			return nil, errors.Wrap(err, fmt.Sprintf("counldn't find doc(id: %s) in collection(%s)", docID, collection))
+		}
+		return nil, err
 	}
 	return &Doc{data: res.Data()}, nil
 }
