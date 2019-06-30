@@ -38,6 +38,8 @@ jobs:
     executor: default
     steps:
       - checkout
+      - attach_workspace:
+          at: /home/circleci/.go_workspace/src/github.com/mookjp/yakiire
       - run:
           name: Install tools
           command: |
