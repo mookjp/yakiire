@@ -42,14 +42,27 @@ jobs:
     executor: container
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - vendor-{{ checksum "Gopkg.lock" }}
       - run:
           name: Install tools
           command: |
             make bootstrap-lint-tools
       - run:
+          name: Install dependencies
+          command: |
+            if [ ! -d vendor ]; then
+              make dep
+            fi
+      - run:
           name: Lint
           command: |
             make lint
+      - save_cache:
+          key: vendor-{{ checksum "Gopkg.lock" }}
+          paths:
+            - vendor
   test:
     executor: default
     steps:
