@@ -3,7 +3,7 @@ VERSION ?= commit-$(GIT_REF)
 
 LINT_TOOLS=\
 	golang.org/x/lint/golint \
-	github.com/client9/misspell \
+	github.com/client9/misspell/cmd/misspell \
 	github.com/kisielk/errcheck
 
 .PHONY: all

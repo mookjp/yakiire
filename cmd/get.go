@@ -53,6 +53,9 @@ var getCmd = &cobra.Command{
 		ctx := context.Background()
 		cred := viper.GetString(credentials)
 		projectId := viper.GetString(projectID)
+		fmt.Printf("credential path: %s\n", cred)
+		fmt.Printf("project id: %s\n", projectId)
+
 		client, err := lib.NewClient(ctx, &lib.ClientConfig{
 			Credentials: cred,
 			ProjectID: projectId,
