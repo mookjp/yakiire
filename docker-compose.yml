@@ -1,0 +1,12 @@
+version: '3'
+services:
+  firestore:
+    image: mookjp/firestore-emulator:latest
+    volumes:
+      - firestore-data:/opt/data
+    ports:
+      - 8080:8080
+    environment:
+      - FIRESTORE_PROJECT_ID=yakiire
+volumes:
+  firestore-data:

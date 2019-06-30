@@ -2,40 +2,20 @@
 
 
 [[projects]]
-  digest = "1:4379c01deacde513679096b699de0f6b4cd640d6ff4e9640171bac4210114028"
+  digest = "1:19304a2e3b9d6766b59ec044c81837ae3380d1b70078950378e2c7d8b8d6a40a"
   name = "cloud.google.com/go"
   packages = [
     "compute/metadata",
     "firestore",
     "firestore/apiv1",
-    "iam",
-    "internal",
     "internal/btree",
     "internal/fields",
-    "internal/optional",
     "internal/trace",
     "internal/version",
-    "storage",
   ]
   pruneopts = "UT"
   revision = "457ea5c15ccf3b87db582c450e80101989da35f7"
   version = "v0.40.0"
-
-[[projects]]
-  digest = "1:3b143445612925e139b8b041d05b9178acc7a7cd5786da436cf9e288b59c9513"
-  name = "firebase.google.com/go"
-  packages = [
-    ".",
-    "auth",
-    "db",
-    "iid",
-    "internal",
-    "messaging",
-    "storage",
-  ]
-  pruneopts = "UT"
-  revision = "be821cdc340e4dcaf1abf04910f727c8b8bda086"
-  version = "v3.8.1"
 
 [[projects]]
   digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
@@ -288,17 +268,15 @@
   version = "v0.3.2"
 
 [[projects]]
-  digest = "1:915d0398815343f50437a81da3c99d88ae31ac38657390768d544dc7b644c2f3"
+  digest = "1:341d8e5c30ab07533e4a9a5c0203138160984e2553415e9cb5d113fe31185800"
   name = "google.golang.org/api"
   packages = [
-    "gensupport",
     "googleapi",
     "googleapi/internal/uritemplates",
     "googleapi/transport",
     "internal",
     "iterator",
     "option",
-    "storage/v1",
     "transport",
     "transport/grpc",
     "transport/http",
@@ -331,15 +309,13 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:83bdd85e8d8b26000eb532e65ee9830c8f0b8462d7b04bfc6c5fe6656c918320"
+  digest = "1:a186220636ece507b363203e698363479bdda76dfdb13130a0ecff484a0f95b3"
   name = "google.golang.org/genproto"
   packages = [
     "googleapis/api/annotations",
     "googleapis/firestore/v1",
-    "googleapis/iam/v1",
     "googleapis/rpc/code",
     "googleapis/rpc/status",
-    "googleapis/type/expr",
     "googleapis/type/latlng",
   ]
   pruneopts = "UT"
@@ -410,7 +386,6 @@
   analyzer-version = 1
   input-imports = [
     "cloud.google.com/go/firestore",
-    "firebase.google.com/go",
     "github.com/mitchellh/go-homedir",
     "github.com/pkg/errors",
     "github.com/spf13/cobra",

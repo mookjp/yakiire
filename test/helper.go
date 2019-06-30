@@ -37,7 +37,7 @@ func (h *Helper) CreateData() {
 	ctx := context.Background()
 
 	products := h.client.Collection(products)
-	res, err := products.Doc("").Set(ctx, Product{
+	res, err := products.Doc("1").Set(ctx, Product{
 		ID:          "1",
 		Name:        "Test Product",
 		CategoryIDs: []string{"1", "2", "3"},
@@ -49,19 +49,28 @@ func (h *Helper) CreateData() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("docs were inserted. res: %s", res)
+	fmt.Printf("docs were inserted. res: %s\n", res)
 }
 
-func (h *Helper) DeleteAll() {
+func (h *Helper) DeleteAll() error {
 	ctx := context.Background()
 	iter := h.client.Collection(products).Documents(ctx)
 	for {
 		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
+		if err != nil {
+			if err == iterator.Done {
+				break
+			} else {
+				return err
+			}
 		}
 		if _, err := doc.Ref.Delete(ctx); err != nil {
-			panic(err)
+			return err
 		}
 	}
+	return nil
+}
+
+func (h *Helper) Close() error {
+	return h.client.Close()
 }

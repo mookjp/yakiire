@@ -58,7 +58,8 @@ var getCmd = &cobra.Command{
 			fmt.Printf("error: %+v", err)
 			os.Exit(1)
 		}
-		res, err := client.Get(collectionName, docName)
+		getCtx, _ := context.WithCancel(ctx)
+		res, err := client.Get(getCtx, collectionName, docName)
 		if err != nil {
 			fmt.Printf("error: %+v", err)
 			os.Exit(1)

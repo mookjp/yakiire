@@ -17,10 +17,6 @@ jobs:
           keys:
             - vendor-{{ checksum "Gopkg.lock" }}
       - run:
-          name: Install tools
-          command: |
-            make bootstrap-lint-tools
-      - run:
           name: Install dependencies
           command: |
             if [ ! -d vendor ]; then
@@ -38,6 +34,22 @@ jobs:
           root: /home/circleci/.go_workspace/src/github.com/mookjp/yakiire
           paths:
             - "vendor/*"
+  lint:
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Install tools
+          command: |
+            make bootstrap-lint-tools
+      - run:
+          name: Install tools
+          command: |
+            make bootstrap-lint-tools
+      - run:
+          name: Lint
+          command: |
+            make lint
   test:
     executor: default
     steps:
@@ -57,6 +69,7 @@ workflows:
   build-and-test:
     jobs:
       - build
+      - lint
       - test:
           requires:
             - build

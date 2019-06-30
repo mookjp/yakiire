@@ -13,7 +13,11 @@
   - [`gcp`](#gcp)
 - [Usage](#usage)
   - [Get](#get)
+- [TODOs](#todos)
+  - [Set](#set)
   - [Query](#query)
+- [For development](#for-development)
+  - [Run tests](#run-tests)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -60,6 +64,7 @@ It is handy to use [jq](https://firebase.google.com/docs/firestore) to check the
 $ yakiire --config .yakiire.yaml get -c products 002VQIDE4D | tail -n 1 | jq .
 ```
 
+## TODOs
 
 ### Set
 
@@ -67,11 +72,19 @@ $ yakiire --config .yakiire.yaml get -c products 002VQIDE4D | tail -n 1 | jq .
 yakiire set -c <collection name> <query>
 ```
 
-
-
 ### Query
 
 ```bash
 yakiire query -c <collection name> <query>
 ```
 
+
+## For development
+
+### Run tests
+
+```bash
+make test
+```
+
+Test needs running Firestore emulator and it can be run with `docker-compose`.

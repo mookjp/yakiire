@@ -24,11 +24,11 @@ get-dep:
 dep: get-dep
 	@GO111MODULE=off dep ensure -v
 
-.PHONY: check
+.PHONY: lint
 check:
 	@go fmt
 	@golint
-	#@misspell
+	@misspell
 	@errcheck
 	@staticcheck
 
@@ -39,4 +39,7 @@ build: dep
 
 .PHONY: test
 test: dep
-	go test
+	@docker-compose up -d firestore
+	@sleep 2
+	@FIRESTORE_EMULATOR_HOST=localhost:8080 go test -v ./...
+	@docker-compose stop firestore
