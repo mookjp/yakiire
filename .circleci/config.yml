@@ -43,10 +43,6 @@ jobs:
           command: |
             make bootstrap-lint-tools
       - run:
-          name: Install tools
-          command: |
-            make bootstrap-lint-tools
-      - run:
           name: Lint
           command: |
             make lint
