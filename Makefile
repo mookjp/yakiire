@@ -3,6 +3,7 @@ VERSION ?= commit-$(GIT_REF)
 
 LINT_TOOLS=\
 	golang.org/x/lint/golint \
+	go get -u github.com/client9/misspell/cmd/misspell \
 	github.com/kisielk/errcheck
 
 .PHONY: all
@@ -27,6 +28,7 @@ dep: get-dep
 lint:
 	@go fmt
 	@golint
+	@misspell
 	@errcheck
 
 .PHONY: build
