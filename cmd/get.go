@@ -28,7 +28,8 @@ import (
 
 const (
 	collections = "collections"
-	credentials = "gcp.credentials"
+	credentials = "google-application-credentials"
+	projectID = "firesttore-project-id"
 )
 
 // getCmd represents the get command
@@ -51,8 +52,10 @@ var getCmd = &cobra.Command{
 
 		ctx := context.Background()
 		cred := viper.GetString(credentials)
+		projectId := viper.GetString(projectID)
 		client, err := lib.NewClient(ctx, &lib.ClientConfig{
 			Credentials: cred,
+			ProjectID: projectId,
 		})
 		if err != nil {
 			fmt.Printf("error: %+v", err)

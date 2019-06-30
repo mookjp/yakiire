@@ -21,25 +21,23 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Configuration
+## Installation
 
-`yakiire` needs configuration file.
-It sees `${HOME}`/.yakiire.yaml by default.
-
-You can set the file path by `--config` flag.
-
-The yaml file is like this:
-
-```yaml
-gcp:
-  credentials: "credentials/cred.json"
+```bash
+go get github.com/mookjp/yakiire
 ```
 
-### `gcp`
+## Configuration
 
-| key | value |
-|-----|-------|
-| credentials | GCP's credential file path |
+`yakiire` needs environment variables:
+
+| ENV | value | required |
+|-----|-------|----------|
+| YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS | GCP's credential file path | No |
+| YAKIIRE_FIRESTORE_PROJECT_ID | Firestore project ID | No |
+
+
+If these variables are not set, `yakiire` uses Google's environment variables e.g. `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS`.
 
 
 ## Usage
