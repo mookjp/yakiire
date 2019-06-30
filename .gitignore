@@ -20,5 +20,5 @@ credentials
 .envrc
 
 # Others 
-.iml
+*.iml
 .idea
