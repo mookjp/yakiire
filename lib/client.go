@@ -28,6 +28,8 @@ type Condition struct {
 	Value string
 }
 
+const defaultLimit = 20
+
 // NewClient returns a Client to operate data on Firestore
 func NewClient(ctx context.Context, config *ClientConfig) (*Client, error) {
 	var client *firestore.Client
@@ -69,7 +71,12 @@ func (c *Client) Query(ctx context.Context, collection string, conditions []*Con
 	for _, condition := range conditions {
 		query = collectionRef.Where(condition.Path, condition.Op, condition.Value)
 	}
-	docs, err := query.Limit(limit).Documents(ctx).GetAll()
+	if limit != 0 {
+		query = query.Limit(limit)
+	} else {
+		query = query.Limit(defaultLimit)
+	}
+	docs, err := query.Documents(ctx).GetAll()
 	if err != nil {
 		return nil, err
 	}
