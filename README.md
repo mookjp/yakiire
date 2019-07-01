@@ -97,7 +97,8 @@ yakiire query -c <collection name> <query>
 ### Run tests
 
 ```bash
-make test
+FIRESTORE_EMULATOR_HOST=localhost:8080 make test
 ```
 
 Test needs running Firestore emulator and it can be run with `docker-compose`.
+in `Makefile`, `test` will start firestore emulator container before it starts tests.
