@@ -11,9 +11,9 @@ type Doc struct {
 
 // String returns JSON string of documentation
 func (d *Doc) String() string {
-	if j, err := json.Marshal(d.data); err == nil {
-		return string(j)
-	} else {
+	j, err := json.Marshal(d.data)
+	if err != nil {
 		panic(err)
 	}
+	return string(j)
 }
