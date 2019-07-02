@@ -18,16 +18,11 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/mookjp/yakiire/lib"
 	"os"
 
-	"github.com/spf13/cobra"
-)
+	"github.com/mookjp/yakiire/lib"
 
-const (
-	collections = "collections"
-	credentials = "YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS"
-	projectID = "YAKIIRE_FIRESTORE_PROJECT_ID"
+	"github.com/spf13/cobra"
 )
 
 // getCmd represents the get command
@@ -42,22 +37,22 @@ var getCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		flags := cmd.PersistentFlags()
-		collectionName, err := flags.GetString(collections)
+		flags := cmd.Flags()
+		collectionName, err := flags.GetString(cmdCollectionsKey)
 		if err != nil {
 			panic(err)
 		}
 
-		ctx := context.Background()
-
-		cred := os.Getenv(credentials)
-		projectId := os.Getenv(projectID)
+		config := getConfig(cmd.Root())
+		cred := config.credentialPath
+		projectId := config.projectId
 		fmt.Printf("credential path: %s\n", cred)
 		fmt.Printf("project id: %s\n", projectId)
 
+		ctx := context.Background()
 		client, err := lib.NewClient(ctx, &lib.ClientConfig{
 			Credentials: cred,
-			ProjectID: projectId,
+			ProjectID:   projectId,
 		})
 		if err != nil {
 			fmt.Printf("error: %+v", err)
@@ -78,18 +73,9 @@ var getCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(getCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// getCmd.PersistentFlags().String("foo", "", "A help for foo")
-	getCmd.PersistentFlags().StringP(collections, "c", "", "The collection name to get a document from")
-	err := getCmd.MarkFlagRequired(collections)
-	if err == nil {
+	getCmd.Flags().StringP(cmdCollectionsKey, "c", "", "The collection name to get a document from")
+	err := getCmd.MarkFlagRequired(cmdCollectionsKey)
+	if err != nil {
 		panic(err)
 	}
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// getCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
