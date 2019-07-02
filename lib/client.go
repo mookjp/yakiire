@@ -25,7 +25,7 @@ type ClientConfig struct {
 type Condition struct {
 	Path  string
 	Op    string
-	Value string
+	Value interface{}
 }
 
 const defaultLimit = 20

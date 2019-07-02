@@ -22,7 +22,12 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
+	"os"
+
+	"github.com/mookjp/yakiire/lib"
 
 	"github.com/spf13/cobra"
 )
@@ -38,20 +43,96 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("query called")
+
+		config := getConfig(cmd.Root())
+		cred := config.credentialPath
+		projectId := config.projectId
+		fmt.Printf("credential path: %s\n", cred)
+		fmt.Printf("project id: %s\n", projectId)
+
+		flags := cmd.Flags()
+		collectionName, err := flags.GetString(cmdCollectionsKey)
+		if err != nil {
+			panic(err)
+		}
+
+		ctx := context.Background()
+		client, err := lib.NewClient(ctx, &lib.ClientConfig{
+			Credentials: cred,
+			ProjectID:   projectId,
+		})
+		if err != nil {
+			fmt.Printf("error: %+v", err)
+			os.Exit(1)
+		}
+
+		jsons, err := flags.GetStringArray(cmdWhereKey)
+		if err != nil {
+			panic(err)
+		}
+		conds, err := parseJSONs(jsons)
+		if err != nil {
+			fmt.Printf("wrong JSON: %+v", err)
+			os.Exit(1)
+		}
+
+		limit, err := flags.GetInt(cmdLimitKey)
+		if err != nil {
+			panic(err)
+		}
+
+		queryCtx, _ := context.WithCancel(ctx)
+		res, err := client.Query(queryCtx, collectionName, conds, limit)
+		if err != nil {
+			fmt.Printf("error: %+v", err)
+			os.Exit(1)
+		}
+		ctx.Done()
+
+		for _, r := range res {
+			fmt.Printf("%s\n", r)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(queryCmd)
 
-	// Here you will define your flags and configuration settings.
+	queryCmd.Flags().StringP(cmdCollectionsKey, "c", "", "The collection name to get a document from")
+	err := queryCmd.MarkFlagRequired(cmdCollectionsKey)
+	if err != nil {
+		panic(err)
+	}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// queryCmd.PersistentFlags().String("foo", "", "A help for foo")
+	queryCmd.Flags().StringArrayP(cmdWhereKey, "w", []string{}, "where condition to search docs")
+	whereErr := queryCmd.MarkFlagRequired(cmdWhereKey)
+	if whereErr != nil {
+		panic(whereErr)
+	}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// queryCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	queryCmd.Flags().IntP(cmdLimitKey, "l", 20, "the limit number of the result set")
+}
+
+func parseJSONs(jsons []string) ([]*lib.Condition, error) {
+	if len(jsons) == 0 {
+		panic("no items")
+	}
+	res := make([]*lib.Condition, 0)
+	for _, j := range jsons {
+		c, err := parseJSON(j)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, c)
+	}
+	return res, nil
+}
+
+func parseJSON(j string) (*lib.Condition, error) {
+	c := &lib.Condition{}
+	err := json.Unmarshal([]byte(j), c)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
 }
