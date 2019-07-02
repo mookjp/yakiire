@@ -73,10 +73,38 @@ jobs:
           name: Run tests
           command: |
             make test
+  release:
+    executor: default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /home/circleci/.go_workspace/src/github.com/mookjp/yakiire
+      - run:
+          name: Get tools
+          command: |
+            go get github.com/mitchellh/gox
+            go get github.com/tcnksm/ghr
+      - run:
+          name: Compile
+          command: |
+            mkdir releases
+            gox -os="linux osx windows" -output="releases/{{.OS}}_{{.Arch}}/{{.Dir}}"
+      - run:
+          name: Upload binary
+          command: |
+            VERSION=$(bin/yakiire --version) \
+              ghr -t ${GITHUB_TOKEN} \
+                -u ${CIRCLE_PROJECT_USERNAME} \
+                -r ${CIRCLE_PROJECT_REPONAME} \
+                -c ${CIRCLE_SHA1} \
+                -n ${VERSION} \
+                -delete \
+                ${VERSION} \
+                ./releases/
 
 workflows:
   version: 2.1
-  build-and-test:
+  default:
     jobs:
       - build
       - lint:
@@ -85,3 +113,12 @@ workflows:
       - test:
           requires:
             - build
+      - release:
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              only:
+                - master
+                - develop
