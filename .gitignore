@@ -13,6 +13,7 @@
 
 vendor
 bin
+dist
 
 # for development
 .yakiire.yaml

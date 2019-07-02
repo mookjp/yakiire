@@ -37,6 +37,7 @@ jobs:
       - persist_to_workspace:
           root: /home/circleci/.go_workspace/src/github.com/mookjp/yakiire
           paths:
+            - "bin/yakiire" # to get the version in release job
             - "vendor/*"
   lint:
     executor: container
@@ -87,20 +88,21 @@ jobs:
       - run:
           name: Compile
           command: |
-            mkdir releases
-            gox -os="linux osx windows" -output="releases/{{.OS}}_{{.Arch}}/{{.Dir}}"
+            mkdir dist
+            gox -osarch="linux/386 linux/amd64 darwin/amd64 darwin/386 windows/386 windows/amd64" -output="dist/{{.OS}}_{{.Arch}}/{{.Dir}}"
+            ls dist | xargs -ITARGET zip -r dist/TARGET dist/TARGET
       - run:
           name: Upload binary
           command: |
-            VERSION=$(bin/yakiire --version) \
               ghr -t ${GITHUB_TOKEN} \
                 -u ${CIRCLE_PROJECT_USERNAME} \
                 -r ${CIRCLE_PROJECT_REPONAME} \
                 -c ${CIRCLE_SHA1} \
-                -n ${VERSION} \
+                -n $(./bin/yakiire --version) \
                 -delete \
-                ${VERSION} \
-                ./releases/
+                -prerelease \
+                $(./bin/yakiire --version) \
+                dist
 
 workflows:
   version: 2.1
