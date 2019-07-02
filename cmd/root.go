@@ -23,6 +23,7 @@ import (
 )
 
 const (
+	cmdVersionKey     = "version"
 	cmdCredentialsKey = "credentials"
 	cmdProjectIdKey   = "projectId"
 	cmdCollectionsKey = "collection"
@@ -31,6 +32,8 @@ const (
 
 	envCredentialsKey = "YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS"
 	envProjectIdKey   = "YAKIIRE_FIRESTORE_PROJECT_ID"
+
+	version = "0.0.1-alpha"
 )
 
 type cmdConfig struct {
@@ -45,7 +48,16 @@ var rootCmd = &cobra.Command{
 	Long:  `ex) yakiire get -c products ABC`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		if v, err := cmd.Flags().GetBool(cmdVersionKey); err == nil {
+			if v {
+				fmt.Print(version)
+			}
+			os.Exit(0)
+		} else {
+			panic("wrong version key")
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -59,6 +71,8 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().BoolP(cmdVersionKey, "v", false, "version")
+
 	rootCmd.PersistentFlags().String(cmdCredentialsKey, "", "Google Application Credential path")
 	rootCmd.PersistentFlags().String(cmdProjectIdKey, "", "Firestore project ID")
 }
