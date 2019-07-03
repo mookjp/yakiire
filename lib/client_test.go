@@ -2,7 +2,6 @@ package lib
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"cloud.google.com/go/firestore"
@@ -65,7 +64,7 @@ func TestNewClient(t *testing.T) {
 		setup()
 
 		if tt.fireStoreErr {
-			helper.Close()
+			teardown()
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
@@ -415,15 +414,20 @@ func setup() {
 }
 
 func teardown() {
+	// Check if helper is initialized
+	if helper == nil {
+		return
+	}
+
+	// Delete all documents and close helper
 	if err := helper.DeleteAll(); err != nil {
-		if err.Error() == "rpc error: code = Canceled desc = grpc: the client connection is closing" {
-			fmt.Printf("couldn't delete docs as the connection was closed intentionally, cause: %+v\n", err)
-			return
-		}
 		panic(err)
 	}
 	err := helper.Close()
 	if err != nil {
 		panic(err)
 	}
+
+	// Set helper to nil to prevent re-teardown
+	helper = nil
 }
