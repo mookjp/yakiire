@@ -36,7 +36,7 @@ go get github.com/mookjp/yakiire
 | YAKIIRE_FIRESTORE_PROJECT_ID | Firestore project ID | Yes |
 | YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS | GCP's credential file path | No |
 
-If `YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS` was not set, `yakiire` uses `YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS` to access to Firestore.
+If `YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS` was not set, `yakiire` uses `GOOGLE_APPLICATION_CREDENTIALS` to access to Firestore.
 
 
 ## Usage
