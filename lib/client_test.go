@@ -381,23 +381,6 @@ func TestClient_Add(t *testing.T) {
 			want:    "{\"Attributes\":{\"color\":\"blue\",\"size\":200},\"CategoryIDs\":[\"3\",\"4\",\"5\"],\"ID\":\"2\",\"Name\":\"Another Test Product\"}",
 			wantErr: false,
 		},
-		{
-			name: "returns an error when the document is nil",
-			fields: fields{
-				config: &ClientConfig{
-					Credentials: "test",
-					ProjectID:   "yakiire",
-				},
-				firestore: client,
-			},
-			args: args{
-				ctx:        context.Background(),
-				collection: "products",
-				document:   nil,
-			},
-			want:    "",
-			wantErr: true,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
