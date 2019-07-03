@@ -5,7 +5,7 @@
 
 `yakiire` (yaki-ire; 焼入れ) is a CLI to manage and operate data on GCP [Firestore](https://firebase.google.com/docs/firestore).
 
-** THIS IS THE ALPHA VERSION !! **
+**THIS IS THE ALPHA VERSION !!**
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
