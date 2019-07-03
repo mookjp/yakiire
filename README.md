@@ -52,7 +52,7 @@ yakiire get -c <collection name> <document ID>
 e.g.
 
 ```bash
-$ yakiire --config .yakiire.yaml get -c products 002VQIDE4D
+$ yakiire get -c products 002VQIDE4D
 
 # it shows a doc in JSON format
 
@@ -62,7 +62,7 @@ $ yakiire --config .yakiire.yaml get -c products 002VQIDE4D
 It is handy to use [jq](https://firebase.google.com/docs/firestore) to check the result from the command.
 
 ```bash
-$ yakiire --config .yakiire.yaml get -c products 002VQIDE4D | tail -n 1 | jq .
+$ yakiire get -c products 002VQIDE4D | tail -n 1 | jq .
 
 {
   "Attributes": {
