@@ -348,7 +348,7 @@ func TestClient_Add(t *testing.T) {
 	type args struct {
 		ctx        context.Context
 		collection string
-		document   interface{}
+		document   map[string]interface{}
 	}
 	tests := []struct {
 		name    string

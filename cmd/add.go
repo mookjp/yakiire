@@ -21,7 +21,7 @@ var addCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		var doc interface{}
+		var doc map[string]interface{}
 		err := json.Unmarshal([]byte(documentStr), &doc)
 		if err != nil {
 			fmt.Printf("Failed to unmarshal JSON with error: %s", err)
