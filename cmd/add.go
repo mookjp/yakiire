@@ -53,7 +53,7 @@ var addCmd = &cobra.Command{
 		}
 		ctx.Done()
 
-		fmt.Println(res)
+		fmt.Printf("%s", res)
 	},
 }
 
