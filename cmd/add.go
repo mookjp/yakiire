@@ -45,8 +45,8 @@ var addCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		getCtx, _ := context.WithCancel(ctx)
-		res, err := client.Add(getCtx, collectionName, doc)
+		addCtx, _ := context.WithCancel(ctx)
+		res, err := client.Add(addCtx, collectionName, doc)
 		if err != nil {
 			fmt.Printf("error: %+v", err)
 			os.Exit(1)
