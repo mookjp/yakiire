@@ -82,23 +82,38 @@ $ yakiire get -c products 002VQIDE4D | tail -n 1 | jq .
 ### Query
 
 ```bash
-yakiire query --collection products --where '{"Path": "Attributes.size", "Op": ">, "Value": 0}' --limit 1
+yakiire query --collection products \
+    --where '{"Path": "Attributes.size", "Op": ">", "Value": 0}' \
+    --where '{"Path": "Attributes.color", "Op": "==", "Value": "red"}' \
+    --limit 1
 ```
 
 e.g.
 
 ```bash
-yakiire query --collection products --where '{"Path": "Attributes.size", "Op": ">, "Value": 0}'
+yakiire query --collection products \
+    --where '{"Path": "Attributes.size", "Op": ">", "Value": 0}'
 
 # it shows docs in line-delimited JSON format
 
 {"Attributes":{"color":"red","size":100},"CategoryIDs":["1","2","3"],"ID":"1","Name":"Test Product"}
 {"Attributes":{"color":"red","size":200},"CategoryIDs":["1","2","3"],"ID":"2","Name":"Another Test Product"}
 
-yakiire query --collection products --where '{"Path": "Attributes.size", "Op": ">, "Value": 0}' --limit 1
+yakiire query --collection products \
+    --where '{"Path": "Attributes.size", "Op": ">", "Value": 0}' \
+    --limit 1
 
 # limit to 1 result
 # default number of limit is 20
+
+{"Attributes":{"color":"red","size":100},"CategoryIDs":["1","2","3"],"ID":"1","Name":"Test Product"}
+
+yakiire query --collection products \
+    --where '{"Path": "Attributes.size", "Op": ">", "Value": 0}' \
+    --where '{"Path": "CategoryIDs", "Op": "array-contains", "Value": "1"}' \
+    --limit 1
+
+# multiple where conditions
 
 {"Attributes":{"color":"red","size":100},"CategoryIDs":["1","2","3"],"ID":"1","Name":"Test Product"}
 ```
