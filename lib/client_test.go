@@ -418,6 +418,12 @@ func TestClient_Add(t *testing.T) {
 			}
 		})
 	}
+
+	h := test.NewHelper()
+	if err := h.DeleteAll(); err != nil {
+		panic(err)
+	}
+	h.Close()
 }
 
 func setup() {
