@@ -83,6 +83,8 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestClient_Get(t *testing.T) {
+	setup()
+
 	client, err := firestore.NewClient(context.Background(), "yakiire")
 	if err != nil {
 		panic(err)
@@ -158,9 +160,13 @@ func TestClient_Get(t *testing.T) {
 			}
 		})
 	}
+
+	teardown()
 }
 
 func TestClient_Query(t *testing.T) {
+	setup()
+
 	client, err := firestore.NewClient(context.Background(), "yakiire")
 	if err != nil {
 		panic(err)
@@ -332,9 +338,13 @@ func TestClient_Query(t *testing.T) {
 			}
 		})
 	}
+
+	teardown()
 }
 
 func TestClient_Add(t *testing.T) {
+	setup()
+
 	client, err := firestore.NewClient(context.Background(), "yakiire")
 	if err != nil {
 		panic(err)
@@ -401,11 +411,7 @@ func TestClient_Add(t *testing.T) {
 		})
 	}
 
-	helper = test.NewHelper()
-	if err := helper.DeleteAll(); err != nil {
-		panic(err)
-	}
-	helper.Close()
+	teardown()
 }
 
 func setup() {
