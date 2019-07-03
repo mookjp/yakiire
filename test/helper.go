@@ -2,7 +2,6 @@ package test
 
 import (
 	"context"
-	"fmt"
 
 	"google.golang.org/api/iterator"
 
@@ -71,7 +70,7 @@ func (h *Helper) Close() error {
 }
 
 func createProduct1(ctx context.Context, products *firestore.CollectionRef) {
-	res, err := products.Doc("1").Set(ctx, Product{
+	_, err := products.Doc("1").Set(ctx, Product{
 		ID:          "1",
 		Name:        "Test Product",
 		CategoryIDs: []string{"1", "2", "3"},
@@ -83,11 +82,10 @@ func createProduct1(ctx context.Context, products *firestore.CollectionRef) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("docs were inserted. res: %s\n", res)
 }
 
 func createProduct2(ctx context.Context, products *firestore.CollectionRef) {
-	res, err := products.Doc("2").Set(ctx, Product{
+	_, err := products.Doc("2").Set(ctx, Product{
 		ID:          "2",
 		Name:        "Another Test Product",
 		CategoryIDs: []string{"3", "4", "5"},
@@ -99,11 +97,10 @@ func createProduct2(ctx context.Context, products *firestore.CollectionRef) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("docs were inserted. res: %s\n", res)
 }
 
 func createProduct3(ctx context.Context, products *firestore.CollectionRef) {
-	res, err := products.Doc("3").Set(ctx, Product{
+	_, err := products.Doc("3").Set(ctx, Product{
 		ID:          "3",
 		Name:        "Another Great Test Product",
 		CategoryIDs: []string{"5", "6", "7"},
@@ -115,5 +112,4 @@ func createProduct3(ctx context.Context, products *firestore.CollectionRef) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("docs were inserted. res: %s\n", res)
 }
