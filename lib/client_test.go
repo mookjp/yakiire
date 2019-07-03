@@ -12,8 +12,6 @@ import (
 var helper *test.Helper
 
 func TestNewClient(t *testing.T) {
-	setup()
-
 	type args struct {
 		ctx    context.Context
 		config *ClientConfig
