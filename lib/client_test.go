@@ -335,6 +335,88 @@ func TestClient_Query(t *testing.T) {
 	}
 }
 
+func TestClient_Add(t *testing.T) {
+	client, err := firestore.NewClient(context.Background(), "yakiire")
+	if err != nil {
+		panic(err)
+	}
+
+	type fields struct {
+		config    *ClientConfig
+		firestore *firestore.Client
+	}
+	type args struct {
+		ctx        context.Context
+		collection string
+		document   interface{}
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "Adds a doc to the collection",
+			fields: fields{
+				config: &ClientConfig{
+					Credentials: "test",
+					ProjectID:   "yakiire",
+				},
+				firestore: client,
+			},
+			args: args{
+				ctx:        context.Background(),
+				collection: "products",
+				document: map[string]interface{}{
+					"Attributes": map[string]interface{}{
+						"color": "blue", "size": 200,
+					},
+					"CategoryIDs": [...]string{"3", "4", "5"},
+					"ID":          "2",
+					"Name":        "Another Test Product",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "returns an error when the document is nil",
+			fields: fields{
+				config: &ClientConfig{
+					Credentials: "test",
+					ProjectID:   "yakiire",
+				},
+				firestore: client,
+			},
+			args: args{
+				ctx:        context.Background(),
+				collection: "products",
+				document:   nil,
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &Client{
+				config:    tt.fields.config,
+				firestore: tt.fields.firestore,
+			}
+			got, err := c.Add(tt.args.ctx, tt.args.collection, tt.args.document)
+			if err != nil {
+				if !tt.wantErr {
+					t.Errorf("Client.Add() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				return
+			}
+			if len(got.ID) == 0 {
+				t.Errorf("Client.Add() returned zero length ID")
+			}
+		})
+	}
+}
+
 func setup() {
 	helper = test.NewHelper()
 	helper.CreateData()
