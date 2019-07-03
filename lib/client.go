@@ -88,11 +88,15 @@ func (c *Client) Query(ctx context.Context, collection string, conditions []*Con
 }
 
 // Add a document into a collection
-func (c *Client) Add(ctx context.Context, collection string, document interface{}) (*firestore.DocumentRef, error) {
+func (c *Client) Add(ctx context.Context, collection string, document interface{}) (*Doc, error) {
 	collectionRef := c.firestore.Collection(collection)
 	res, _, err := collectionRef.Add(ctx, document)
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+	doc, err := res.Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &Doc{data: doc.Data()}, nil
 }

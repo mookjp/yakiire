@@ -354,6 +354,7 @@ func TestClient_Add(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
+		want    string
 		wantErr bool
 	}{
 		{
@@ -377,6 +378,7 @@ func TestClient_Add(t *testing.T) {
 					"Name":        "Another Test Product",
 				},
 			},
+			want:    "{\"Attributes\":{\"color\":\"blue\",\"size\":200},\"CategoryIDs\":[\"3\",\"4\",\"5\"],\"ID\":\"2\",\"Name\":\"Another Test Product\"}",
 			wantErr: false,
 		},
 		{
@@ -393,6 +395,7 @@ func TestClient_Add(t *testing.T) {
 				collection: "products",
 				document:   nil,
 			},
+			want:    "",
 			wantErr: true,
 		},
 	}
@@ -410,8 +413,8 @@ func TestClient_Add(t *testing.T) {
 				}
 				return
 			}
-			if len(got.ID) == 0 {
-				t.Errorf("Client.Add() returned zero length ID")
+			if got.String() != tt.want {
+				t.Errorf("Client.Add().String() = %s, want %v", got.String(), tt.want)
 			}
 		})
 	}

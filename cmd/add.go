@@ -53,7 +53,7 @@ var addCmd = &cobra.Command{
 		}
 		ctx.Done()
 
-		fmt.Println("Document addded with ID:", res.ID)
+		fmt.Println(res)
 	},
 }
 
