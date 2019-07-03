@@ -23,7 +23,10 @@ var addCmd = &cobra.Command{
 
 		var doc interface{}
 		err := json.Unmarshal([]byte(documentStr), &doc)
-		fmt.Println(doc)
+		if err != nil {
+			fmt.Printf("Failed to unmarshal JSON with error: %s", err)
+			os.Exit(1)
+		}
 
 		flags := cmd.Flags()
 		collectionName, err := flags.GetString(cmdCollectionsKey)
