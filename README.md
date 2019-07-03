@@ -118,6 +118,22 @@ yakiire query --collection products \
 {"Attributes":{"color":"red","size":100},"CategoryIDs":["1","2","3"],"ID":"1","Name":"Test Product"}
 ```
 
+### Add
+
+```bash
+yakiire add -c <collection name> <json string>
+```
+
+e.g.
+
+```bash
+yakiire add --collection products '{"Attributes":{"color":"red","size":"100"},"CategoryIDs":["1","2","3"],"ID":"002VQIDE4D","Name":"Test Product"}'
+
+# it shows the doc in JSON format if added successfully
+
+{"Attributes":{"color":"red","size":"100"},"CategoryIDs":["1","2","3"],"ID":"002VQIDE4D","Name":"Test Product"}
+```
+
 ## TODOs
 
 ### Set
