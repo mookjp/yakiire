@@ -412,6 +412,68 @@ func TestClient_Add(t *testing.T) {
 	teardown()
 }
 
+func TestClient_Delete(t *testing.T) {
+	setup()
+
+	client, err := firestore.NewClient(context.Background(), "yakiire")
+	if err != nil {
+		panic(err)
+	}
+
+	type fields struct {
+		config    *ClientConfig
+		firestore *firestore.Client
+	}
+	type args struct {
+		ctx        context.Context
+		collection string
+		docID      string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    string
+		wantErr bool
+	}{
+		{
+			name: "deletes a doc without error",
+			fields: fields{
+				config: &ClientConfig{
+					Credentials: "test",
+					ProjectID:   "yakiire",
+				},
+				firestore: client,
+			},
+			args: args{
+				ctx:        context.Background(),
+				collection: "products",
+				docID:      "1",
+			},
+			want:    "",
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &Client{
+				config:    tt.fields.config,
+				firestore: tt.fields.firestore,
+			}
+			err := c.Delete(tt.args.ctx, tt.args.collection, tt.args.docID)
+			if err != nil {
+				if !tt.wantErr {
+					t.Errorf("Client.Delete() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+				return
+			}
+		})
+	}
+
+	teardown()
+}
+
 func setup() {
 	helper = test.NewHelper()
 	helper.CreateData()

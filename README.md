@@ -134,6 +134,20 @@ yakiire add --collection products '{"Attributes":{"color":"red","size":"100"},"C
 {"Attributes":{"color":"red","size":"100"},"CategoryIDs":["1","2","3"],"ID":"002VQIDE4D","Name":"Test Product"}
 ```
 
+### Delete
+
+```bash
+yakiire delete -c <collection name> <document ID>
+```
+
+e.g.
+
+```bash
+yakiire delete --collection products 002VQIDE4D
+
+# No output is returned if the document is deleted or does not exist (default firestore behavior)
+```
+
 ## TODOs
 
 ### Set
