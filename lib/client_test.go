@@ -2,7 +2,6 @@ package lib
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"cloud.google.com/go/firestore"
@@ -13,8 +12,6 @@ import (
 var helper *test.Helper
 
 func TestNewClient(t *testing.T) {
-	setup()
-
 	type args struct {
 		ctx    context.Context
 		config *ClientConfig
@@ -65,7 +62,7 @@ func TestNewClient(t *testing.T) {
 		setup()
 
 		if tt.fireStoreErr {
-			helper.Close()
+			teardown()
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
@@ -84,6 +81,8 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestClient_Get(t *testing.T) {
+	setup()
+
 	client, err := firestore.NewClient(context.Background(), "yakiire")
 	if err != nil {
 		panic(err)
@@ -159,9 +158,13 @@ func TestClient_Get(t *testing.T) {
 			}
 		})
 	}
+
+	teardown()
 }
 
 func TestClient_Query(t *testing.T) {
+	setup()
+
 	client, err := firestore.NewClient(context.Background(), "yakiire")
 	if err != nil {
 		panic(err)
@@ -333,9 +336,13 @@ func TestClient_Query(t *testing.T) {
 			}
 		})
 	}
+
+	teardown()
 }
 
 func TestClient_Add(t *testing.T) {
+	setup()
+
 	client, err := firestore.NewClient(context.Background(), "yakiire")
 	if err != nil {
 		panic(err)
@@ -402,11 +409,7 @@ func TestClient_Add(t *testing.T) {
 		})
 	}
 
-	helper = test.NewHelper()
-	if err := helper.DeleteAll(); err != nil {
-		panic(err)
-	}
-	helper.Close()
+	teardown()
 }
 
 func setup() {
@@ -415,15 +418,20 @@ func setup() {
 }
 
 func teardown() {
+	// Check if helper is initialized
+	if helper == nil {
+		return
+	}
+
+	// Delete all documents and close helper
 	if err := helper.DeleteAll(); err != nil {
-		if err.Error() == "rpc error: code = Canceled desc = grpc: the client connection is closing" {
-			fmt.Printf("couldn't delete docs as the connection was closed intentionally, cause: %+v\n", err)
-			return
-		}
 		panic(err)
 	}
 	err := helper.Close()
 	if err != nil {
 		panic(err)
 	}
+
+	// Set helper to nil to prevent re-teardown
+	helper = nil
 }
