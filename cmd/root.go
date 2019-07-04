@@ -30,24 +30,24 @@ type Flag struct {
 	value       interface{}
 }
 
-var cmdVersion = &Flag{"version", "v", "Get current version", false}
-var cmdCredentials = &Flag{"credentials", "cred", "Set credentials path for firebase login", ""}
-var cmdProjectID = &Flag{"projectId", "prj", "Set the project to work on", ""}
-var cmdCollection = &Flag{"collection", "c", "Set the collection to work on", ""}
-var cmdWhere = &Flag{"where", "w", "Where condition to search documents", []string{}}
-var cmdLimit = &Flag{"limit", "l", "Limit the number of results", 20}
-var cmdDocumentID = &Flag{"document-id", "id", "Set the document ID to work on", ""}
-
 const (
 	envCredentialsKey = "YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS"
-	envProjectIdKey   = "YAKIIRE_FIRESTORE_PROJECT_ID"
+	envProjectIDKey   = "YAKIIRE_FIRESTORE_PROJECT_ID"
 
 	version = "0.0.1-alpha"
 )
 
+var cmdVersion = &Flag{"version", "v", "Get current version", false}
+var cmdCredentials = &Flag{"credentials", "cred", "Set credentials path for firebase login", ""}
+var cmdProjectID = &Flag{"projectId", "", "Set the project to work on", os.Getenv(envProjectIDKey)}
+var cmdCollection = &Flag{"collection", "c", "Set the collection to work on", os.Getenv(envCredentialsKey)}
+var cmdWhere = &Flag{"where", "w", "Where condition to search documents", []string{}}
+var cmdLimit = &Flag{"limit", "l", "Limit the number of results", 20}
+var cmdDocumentID = &Flag{"documentId", "d", "Set the document ID to work on", ""}
+
 type cmdConfig struct {
 	credentialPath string
-	projectId      string
+	projectID      string
 }
 
 // rootCmd represents the base command when called without any subcommands
@@ -82,22 +82,16 @@ func init() {
 	SetCommandFlag(rootCmd, cmdVersion, false)
 
 	for _, f := range []*Flag{cmdCredentials, cmdProjectID} {
-		rootCmd.PersistentFlags().StringP(f.key, f.shortKey, f.value.(string), f.description)
+		rootCmd.PersistentFlags().String(f.key, f.value.(string), f.description)
 	}
 }
 
 func getConfig(cmd *cobra.Command) *cmdConfig {
-	cred, _ := GetFlagString(cmd, cmdCredentials, false)
-	if cred == "" {
-		cred = os.Getenv(envCredentialsKey)
-	}
-	id, _ := GetFlagString(cmd, cmdProjectID, false)
-	if id == "" {
-		id = os.Getenv(envProjectIdKey)
-	}
+	cred := GetFlag(cmd, cmdCredentials, false).(string)
+	id := GetFlag(cmd, cmdProjectID, false).(string)
 
 	return &cmdConfig{
 		credentialPath: cred,
-		projectId:      id,
+		projectID:      id,
 	}
 }

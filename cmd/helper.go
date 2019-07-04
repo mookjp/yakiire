@@ -39,28 +39,31 @@ func MarkFlagRequired(cmd *cobra.Command, f *Flag) {
 	}
 }
 
-// GetFlagString gets the input string from a flag
-func GetFlagString(cmd *cobra.Command, f *Flag, panicOnFail bool) (string, error) {
+// GetFlag gets the value of a flag
+func GetFlag(cmd *cobra.Command, f *Flag, panicOnFail bool) interface{} {
 	flags := cmd.Flags()
-	value, err := flags.GetString(f.key)
-	if err != nil {
-		if panicOnFail {
-			panic(err)
-		}
-		return "", err
-	}
-	return value, nil
-}
 
-// GetFlagInt gets input integer from a flag
-func GetFlagInt(cmd *cobra.Command, f *Flag, panicOnFail bool) int {
-	flags := cmd.Flags()
-	value, err := flags.GetInt(f.key)
+	var value interface{}
+	var err error
+
+	switch f.value.(type) {
+	case string:
+		value, err = flags.GetString(f.key)
+	case int:
+		value, err = flags.GetInt(f.key)
+	case bool:
+		value, err = flags.GetBool(f.key)
+	case []string:
+		value, err = flags.GetStringArray(f.key)
+	default:
+		panic(errors.New("Failed to infer flag type for command " + f.key))
+	}
+
 	if err != nil {
 		if panicOnFail {
 			panic(err)
 		}
-		return 0
+		return f.value
 	}
 	return value
 }
@@ -80,7 +83,7 @@ func GetArgument(args []string, index int, name string, required bool) string {
 func GetClient(ctx context.Context, cmd *cobra.Command) *lib.Client {
 	config := getConfig(cmd.Root())
 	cred := config.credentialPath
-	projectID := config.projectId
+	projectID := config.projectID
 
 	client, err := lib.NewClient(ctx, &lib.ClientConfig{
 		Credentials: cred,

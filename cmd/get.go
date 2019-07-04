@@ -30,7 +30,7 @@ var getCmd = &cobra.Command{
 	Long:  `Get a document by document ID`,
 	Run: func(cmd *cobra.Command, args []string) {
 		docName := GetArgument(args, 0, "Document ID", true)
-		collectionName, _ := GetFlagString(cmd, cmdCollection, true)
+		collectionName := GetFlag(cmd, cmdCollection, true).(string)
 
 		ctx := context.Background()
 		client := GetClient(ctx, cmd)

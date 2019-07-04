@@ -16,7 +16,7 @@ var addCmd = &cobra.Command{
 		documentStr := GetArgument(args, 0, "Document Content", true)
 		doc := Unmarshal(documentStr)
 
-		collectionName, _ := GetFlagString(cmd, cmdCollection, true)
+		collectionName := GetFlag(cmd, cmdCollection, true).(string)
 
 		ctx := context.Background()
 		client := GetClient(ctx, cmd)
@@ -35,5 +35,5 @@ var addCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(addCmd)
-	SetCommandFlag(getCmd, cmdCollection, true)
+	SetCommandFlag(addCmd, cmdCollection, true)
 }
