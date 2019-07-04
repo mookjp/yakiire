@@ -40,12 +40,8 @@ var queryCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		collectionName := GetFlag(cmd, cmdCollection, true).(string)
 		limit := GetFlag(cmd, cmdLimit, true).(int)
+		jsons := GetFlag(cmd, cmdWhere, true).([]string)
 
-		flags := cmd.Flags()
-		jsons, err := flags.GetStringArray(cmdWhere.key)
-		if err != nil {
-			panic(err)
-		}
 		conds, err := parseJSONs(jsons)
 		if err != nil {
 			fmt.Printf("wrong JSON: %+v", err)
