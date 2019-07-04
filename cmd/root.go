@@ -79,7 +79,7 @@ func Execute() {
 }
 
 func init() {
-	SetBoolCommandFlag(rootCmd, cmdVersion, false)
+	SetCommandFlag(rootCmd, cmdVersion, false)
 
 	for _, f := range []*Flag{cmdCredentials, cmdProjectID} {
 		rootCmd.PersistentFlags().StringP(f.key, f.shortKey, f.value.(string), f.description)

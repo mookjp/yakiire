@@ -11,25 +11,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// SetStringCommandFlag sets a string flag to a command
-func SetStringCommandFlag(cmd *cobra.Command, f *Flag, required bool) {
-	cmd.Flags().StringP(f.key, f.shortKey, f.value.(string), f.description)
-	if required {
-		MarkFlagRequired(cmd, f)
+// SetCommandFlag sets a flag to a command
+func SetCommandFlag(cmd *cobra.Command, f *Flag, required bool) {
+	switch v := f.value.(type) {
+	case string:
+		cmd.Flags().StringP(f.key, f.shortKey, v, f.description)
+	case int:
+		cmd.Flags().IntP(f.key, f.shortKey, v, f.description)
+	case bool:
+		cmd.Flags().BoolP(f.key, f.shortKey, v, f.description)
+	case []string:
+		cmd.Flags().StringArrayP(f.key, f.shortKey, v, f.description)
+	default:
+		panic(errors.New("Failed to infer flag type for command " + f.key))
 	}
-}
 
-// SetBoolCommandFlag sets a toggle flag to a command
-func SetBoolCommandFlag(cmd *cobra.Command, f *Flag, required bool) {
-	cmd.Flags().BoolP(f.key, f.shortKey, f.value.(bool), f.description)
-	if required {
-		MarkFlagRequired(cmd, f)
-	}
-}
-
-// SetIntCommandFlag sets a integer flag to a command
-func SetIntCommandFlag(cmd *cobra.Command, f *Flag, required bool) {
-	cmd.Flags().IntP(f.key, f.shortKey, f.value.(int), f.description)
 	if required {
 		MarkFlagRequired(cmd, f)
 	}

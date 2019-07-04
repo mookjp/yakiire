@@ -75,10 +75,9 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(queryCmd)
-	SetStringCommandFlag(queryCmd, cmdCollection, true)
-	SetIntCommandFlag(queryCmd, cmdLimit, false)
-	queryCmd.Flags().StringArrayP(cmdWhere.key, cmdWhere.shortKey, cmdWhere.value.([]string), cmdWhere.description)
-	MarkFlagRequired(queryCmd, cmdWhere)
+	SetCommandFlag(queryCmd, cmdCollection, true)
+	SetCommandFlag(queryCmd, cmdWhere, true)
+	SetCommandFlag(queryCmd, cmdLimit, false)
 }
 
 func parseJSONs(jsons []string) ([]*lib.Condition, error) {

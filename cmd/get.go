@@ -48,5 +48,5 @@ var getCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(getCmd)
-	SetStringCommandFlag(getCmd, cmdCollection, true)
+	SetCommandFlag(getCmd, cmdCollection, true)
 }
