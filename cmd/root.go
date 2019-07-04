@@ -58,13 +58,8 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		if v, err := cmd.Flags().GetBool(cmdVersion.key); err == nil {
-			if v {
-				fmt.Print(version)
-			}
-			os.Exit(0)
-		} else {
-			panic("wrong version key")
+		if GetFlag(cmd, cmdVersion, false).(bool) {
+			fmt.Println(version)
 		}
 	},
 }
