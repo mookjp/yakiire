@@ -22,14 +22,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	cmdVersionKey     = "version"
-	cmdCredentialsKey = "credentials"
-	cmdProjectIdKey   = "projectId"
-	cmdCollectionsKey = "collection"
-	cmdWhereKey       = "where"
-	cmdLimitKey       = "limit"
+// Flag defines one flag for a command
+type Flag struct {
+	key         string
+	shortKey    string
+	description string
+	value       interface{}
+}
 
+var cmdVersion = &Flag{"version", "v", "Get current version", false}
+var cmdCredentials = &Flag{"credentials", "cred", "Set credentials path for firebase login", ""}
+var cmdProjectID = &Flag{"projectId", "prj", "Set the project to work on", ""}
+var cmdCollection = &Flag{"collection", "c", "Set the collection to work on", ""}
+var cmdWhere = &Flag{"where", "w", "Where condition to search documents", []string{}}
+var cmdLimit = &Flag{"limit", "l", "Limit the number of results", 20}
+var cmdDocumentID = &Flag{"document-id", "id", "Set the document ID to work on", ""}
+
+const (
 	envCredentialsKey = "YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS"
 	envProjectIdKey   = "YAKIIRE_FIRESTORE_PROJECT_ID"
 
@@ -49,7 +58,7 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		if v, err := cmd.Flags().GetBool(cmdVersionKey); err == nil {
+		if v, err := cmd.Flags().GetBool(cmdVersion.key); err == nil {
 			if v {
 				fmt.Print(version)
 			}
@@ -70,28 +79,23 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.Flags().BoolP(cmdVersionKey, "v", false, "version")
+	SetBoolCommandFlag(rootCmd, cmdVersion, false)
 
-	rootCmd.PersistentFlags().String(cmdCredentialsKey, "", "Google Application Credential path")
-	rootCmd.PersistentFlags().String(cmdProjectIdKey, "", "Firestore project ID")
+	for _, f := range []*Flag{cmdCredentials, cmdProjectID} {
+		rootCmd.PersistentFlags().StringP(f.key, f.shortKey, f.value.(string), f.description)
+	}
 }
 
 func getConfig(cmd *cobra.Command) *cmdConfig {
-	cred, err := cmd.PersistentFlags().GetString(cmdCredentialsKey)
-	if err != nil {
-		panic(err)
-	}
+	cred, _ := GetFlagString(cmd, cmdCredentials, false)
 	if cred == "" {
 		cred = os.Getenv(envCredentialsKey)
 	}
-	id, err := cmd.PersistentFlags().GetString(cmdProjectIdKey)
-	if err != nil {
-		panic(err)
-	}
+	id, _ := GetFlagString(cmd, cmdProjectID, false)
 	if id == "" {
 		id = os.Getenv(envProjectIdKey)
 	}
+
 	return &cmdConfig{
 		credentialPath: cred,
 		projectId:      id,

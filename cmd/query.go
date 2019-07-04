@@ -43,30 +43,11 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		config := getConfig(cmd.Root())
-		cred := config.credentialPath
-		projectId := config.projectId
-		fmt.Printf("credential path: %s\n", cred)
-		fmt.Printf("project id: %s\n", projectId)
+		collectionName, _ := GetFlagString(cmd, cmdCollection, true)
+		limit := GetFlagInt(cmd, cmdLimit, true)
 
 		flags := cmd.Flags()
-		collectionName, err := flags.GetString(cmdCollectionsKey)
-		if err != nil {
-			panic(err)
-		}
-
-		ctx := context.Background()
-		client, err := lib.NewClient(ctx, &lib.ClientConfig{
-			Credentials: cred,
-			ProjectID:   projectId,
-		})
-		if err != nil {
-			fmt.Printf("error: %+v", err)
-			os.Exit(1)
-		}
-
-		jsons, err := flags.GetStringArray(cmdWhereKey)
+		jsons, err := flags.GetStringArray(cmdWhere.key)
 		if err != nil {
 			panic(err)
 		}
@@ -76,11 +57,8 @@ to quickly create a Cobra application.`,
 			os.Exit(1)
 		}
 
-		limit, err := flags.GetInt(cmdLimitKey)
-		if err != nil {
-			panic(err)
-		}
-
+		ctx := context.Background()
+		client := GetClient(ctx, cmd)
 		queryCtx, _ := context.WithCancel(ctx)
 		res, err := client.Query(queryCtx, collectionName, conds, limit)
 		if err != nil {
@@ -97,20 +75,10 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(queryCmd)
-
-	queryCmd.Flags().StringP(cmdCollectionsKey, "c", "", "The collection name to get a document from")
-	err := queryCmd.MarkFlagRequired(cmdCollectionsKey)
-	if err != nil {
-		panic(err)
-	}
-
-	queryCmd.Flags().StringArrayP(cmdWhereKey, "w", []string{}, "where condition to search docs")
-	whereErr := queryCmd.MarkFlagRequired(cmdWhereKey)
-	if whereErr != nil {
-		panic(whereErr)
-	}
-
-	queryCmd.Flags().IntP(cmdLimitKey, "l", 20, "the limit number of the result set")
+	SetStringCommandFlag(queryCmd, cmdCollection, true)
+	SetIntCommandFlag(queryCmd, cmdLimit, false)
+	queryCmd.Flags().StringArrayP(cmdWhere.key, cmdWhere.shortKey, cmdWhere.value.([]string), cmdWhere.description)
+	MarkFlagRequired(queryCmd, cmdWhere)
 }
 
 func parseJSONs(jsons []string) ([]*lib.Condition, error) {
