@@ -100,3 +100,10 @@ func (c *Client) Add(ctx context.Context, collection string, document map[string
 	}
 	return &Doc{data: doc.Data()}, nil
 }
+
+// Delete a document from a collection
+func (c *Client) Delete(ctx context.Context, collection string, docID string) error {
+	collectionRef := c.firestore.Collection(collection)
+	_, err := collectionRef.Doc(docID).Delete(ctx)
+	return err
+}
