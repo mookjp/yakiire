@@ -35,52 +35,21 @@ import (
 // queryCmd represents the query command
 var queryCmd = &cobra.Command{
 	Use:   "query",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Query a firestore collection",
+	Long:  `Query a firestore collection`,
 	Run: func(cmd *cobra.Command, args []string) {
+		collectionName := GetFlag(cmd, cmdCollection, true).(string)
+		limit := GetFlag(cmd, cmdLimit, true).(int)
+		jsons := GetFlag(cmd, cmdWhere, true).([]string)
 
-		config := getConfig(cmd.Root())
-		cred := config.credentialPath
-		projectId := config.projectId
-		fmt.Printf("credential path: %s\n", cred)
-		fmt.Printf("project id: %s\n", projectId)
-
-		flags := cmd.Flags()
-		collectionName, err := flags.GetString(cmdCollectionsKey)
-		if err != nil {
-			panic(err)
-		}
-
-		ctx := context.Background()
-		client, err := lib.NewClient(ctx, &lib.ClientConfig{
-			Credentials: cred,
-			ProjectID:   projectId,
-		})
-		if err != nil {
-			fmt.Printf("error: %+v", err)
-			os.Exit(1)
-		}
-
-		jsons, err := flags.GetStringArray(cmdWhereKey)
-		if err != nil {
-			panic(err)
-		}
 		conds, err := parseJSONs(jsons)
 		if err != nil {
 			fmt.Printf("wrong JSON: %+v", err)
 			os.Exit(1)
 		}
 
-		limit, err := flags.GetInt(cmdLimitKey)
-		if err != nil {
-			panic(err)
-		}
-
+		ctx := context.Background()
+		client := GetClient(ctx, cmd)
 		queryCtx, _ := context.WithCancel(ctx)
 		res, err := client.Query(queryCtx, collectionName, conds, limit)
 		if err != nil {
@@ -97,20 +66,9 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(queryCmd)
-
-	queryCmd.Flags().StringP(cmdCollectionsKey, "c", "", "The collection name to get a document from")
-	err := queryCmd.MarkFlagRequired(cmdCollectionsKey)
-	if err != nil {
-		panic(err)
-	}
-
-	queryCmd.Flags().StringArrayP(cmdWhereKey, "w", []string{}, "where condition to search docs")
-	whereErr := queryCmd.MarkFlagRequired(cmdWhereKey)
-	if whereErr != nil {
-		panic(whereErr)
-	}
-
-	queryCmd.Flags().IntP(cmdLimitKey, "l", 20, "the limit number of the result set")
+	SetCommandFlag(queryCmd, cmdCollection, true)
+	SetCommandFlag(queryCmd, cmdWhere, true)
+	SetCommandFlag(queryCmd, cmdLimit, false)
 }
 
 func parseJSONs(jsons []string) ([]*lib.Condition, error) {

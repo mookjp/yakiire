@@ -20,8 +20,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mookjp/yakiire/lib"
-
 	"github.com/spf13/cobra"
 )
 
@@ -31,33 +29,11 @@ var getCmd = &cobra.Command{
 	Short: "Get a document by document ID",
 	Long:  `Get a document by document ID`,
 	Run: func(cmd *cobra.Command, args []string) {
-		docName := args[0]
-		if docName == "" {
-			fmt.Printf("doc name is required")
-			os.Exit(1)
-		}
-
-		flags := cmd.Flags()
-		collectionName, err := flags.GetString(cmdCollectionsKey)
-		if err != nil {
-			panic(err)
-		}
-
-		config := getConfig(cmd.Root())
-		cred := config.credentialPath
-		projectId := config.projectId
-		fmt.Printf("credential path: %s\n", cred)
-		fmt.Printf("project id: %s\n", projectId)
+		docName := GetArgument(args, 0, "Document ID", true)
+		collectionName := GetFlag(cmd, cmdCollection, true).(string)
 
 		ctx := context.Background()
-		client, err := lib.NewClient(ctx, &lib.ClientConfig{
-			Credentials: cred,
-			ProjectID:   projectId,
-		})
-		if err != nil {
-			fmt.Printf("error: %+v", err)
-			os.Exit(1)
-		}
+		client := GetClient(ctx, cmd)
 		getCtx, _ := context.WithCancel(ctx)
 		res, err := client.Get(getCtx, collectionName, docName)
 		if err != nil {
@@ -72,10 +48,5 @@ var getCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(getCmd)
-
-	getCmd.Flags().StringP(cmdCollectionsKey, "c", "", "The collection name to get a document from")
-	err := getCmd.MarkFlagRequired(cmdCollectionsKey)
-	if err != nil {
-		panic(err)
-	}
+	SetCommandFlag(getCmd, cmdCollection, true)
 }
