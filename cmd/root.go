@@ -17,23 +17,47 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
+
+const (
+	cmdVersionKey     = "version"
+	cmdCredentialsKey = "credentials"
+	cmdProjectIdKey   = "projectId"
+	cmdCollectionsKey = "collection"
+	cmdWhereKey       = "where"
+	cmdLimitKey       = "limit"
+
+	envCredentialsKey = "YAKIIRE_GOOGLE_APPLICATION_CREDENTIALS"
+	envProjectIdKey   = "YAKIIRE_FIRESTORE_PROJECT_ID"
+
+	version = "0.0.1-alpha"
+)
+
+type cmdConfig struct {
+	credentialPath string
+	projectId      string
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "yakiire",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "a small CLI for Google Firestore",
+	Long:  `ex) yakiire get -c products ABC`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		if v, err := cmd.Flags().GetBool(cmdVersionKey); err == nil {
+			if v {
+				fmt.Print(version)
+			}
+			os.Exit(0)
+		} else {
+			panic("wrong version key")
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -47,4 +71,29 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().BoolP(cmdVersionKey, "v", false, "version")
+
+	rootCmd.PersistentFlags().String(cmdCredentialsKey, "", "Google Application Credential path")
+	rootCmd.PersistentFlags().String(cmdProjectIdKey, "", "Firestore project ID")
+}
+
+func getConfig(cmd *cobra.Command) *cmdConfig {
+	cred, err := cmd.PersistentFlags().GetString(cmdCredentialsKey)
+	if err != nil {
+		panic(err)
+	}
+	if cred == "" {
+		cred = os.Getenv(envCredentialsKey)
+	}
+	id, err := cmd.PersistentFlags().GetString(cmdProjectIdKey)
+	if err != nil {
+		panic(err)
+	}
+	if id == "" {
+		id = os.Getenv(envProjectIdKey)
+	}
+	return &cmdConfig{
+		credentialPath: cred,
+		projectId:      id,
+	}
 }
